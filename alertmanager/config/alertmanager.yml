@@ -15,4 +15,4 @@ receivers:
     smarthost: 'smtp.gmail.com:587'
     auth_username: 'vn2021no1@gmail.com'
     auth_identity: 'vn2021no1@gmail.com'
-    auth_password: 'VN2020NO1@123456'
+    auth_password: '***********'
