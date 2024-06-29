@@ -11,6 +11,7 @@ services:
     container_name: prometheus-container
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/linux_demo_rules.yml:/etc/prometheus/linux_demo_rules.yml
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     ports:
@@ -42,6 +43,7 @@ services:
     volumes:
       - ./alertmanager/config:/config
       - ./alertmanager/data:/data
+      - ./alertmanager/templates:/templates
     command: --config.file=/config/alertmanager.yml --log.level=debug
 
   node-exporter:

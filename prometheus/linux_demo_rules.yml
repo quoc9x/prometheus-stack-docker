@@ -4,53 +4,64 @@
 groups:
 - name: linux_demo_rules
   rules:
-
-################ Memory Usage High
-  - alert: Memory Usage High
-    expr: 100*(windows_cs_physical_memory_bytes)*0 < 1
+  - alert: NodeDown
+    expr: up == 1
     for: 1m
+    labels:
+      severity: critical
+    annotations:
+      title: Node {{ $labels.instance }} is down
+      description: Failed to scrape {{ $labels.job }} on {{ $labels.instance }} for more than 1 minutes. Node seems down.
+  # Alert if any node has a CPU usage above 80% for more than 5 minutes
+  - alert: HighCPUUsage
+    expr: 100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+    for: 5m
     labels:
       severity: warning
     annotations:
-      summary: "Memory Usage (instance {{ $labels.instance }})"
-      description: "Memory Usage is more than 90%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+      summary: "High CPU usage on {{ $labels.instance }}"
+      description: "{{ $labels.instance }} has a CPU usage of {{ $value }}% for more than 5 minutes"
 
-################ CPU Usage High
-  - alert: Cpu Usage High
-    expr: 100 - (avg by (instance) (irate(wmi_cpu_time_total{mode="idle"}[2m])) * 100) > 80
-    for: 1m
+  # Alert if any node has a RAM usage above 90% for more than 5 minutes
+  - alert: HighRAMUsage
+    expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 90
+    for: 5m
     labels:
       severity: warning
     annotations:
-      summary: "CPU Usage (instance {{ $labels.instance }})"
-      description: "CPU Usage is more than 80%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+      summary: "High RAM usage on {{ $labels.instance }}"
+      description: "{{ $labels.instance }} has a RAM usage of {{ $value }}% for more than 5 minutes"
 
-################ Disk Usage
-  - alert: DiskSpaceUsage
-    expr: 100.0 - 100 * ((wmi_logical_disk_free_bytes{} / 1024 / 1024 ) / (wmi_logical_disk_size_bytes{}  / 1024 / 1024)) > 95
-    for: 1m
+  # Alert if any node has a disk usage above 80% for more than 5 minutes
+  - alert: HighDiskUsage
+    expr: node_filesystem_avail_bytes / node_filesystem_size_bytes * 100 < 20
+    for: 5m
     labels:
-      severity: error
+      severity: warning
     annotations:
-      summary: "Disk Space Usage (instance {{ $labels.instance }})"
-      description: "Disk Space on Drive is used more than 95%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+      summary: "High disk usage on {{ $labels.instance }} ({{ $labels.device }})"
+      description: "{{ $labels.instance }} has a disk usage of {{ $value }}% for more than 5 minutes on device {{ $labels.device }}"
 
-################ ServiceStatus
-  - alert: ServiceStatus
-    expr: wmi_service_status{status="ok"} != 1
-    for: 1m
+# Network
+- name: network
+  rules:
+  - record: node_network_receive_bytes_total_rate
+    expr: rate(node_network_receive_bytes_total[5m])
+  - record: node_network_transmit_bytes_total_rate
+    expr: rate(node_network_transmit_bytes_total[5m])
+  - alert: NetworkReceiveHigh
+    expr: node_network_receive_bytes_total_rate > 1000000
+    for: 10m
     labels:
-      severity: error
+      severity: warning
     annotations:
-      summary: "Service Status (instance {{ $labels.instance }})"
-      description: "Windows Service state is not OK\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
-
-################ CollectorError
-  - alert: CollectorError
-    expr: wmi_exporter_collector_success == 0
-    for: 1m
+      summary: "High network receive rate (instance {{ $labels.instance }})"
+      description: "Network receive rate is above 1 MB/s for more than 10 minutes (current value: {{ $value }})"
+  - alert: NetworkTransmitHigh
+    expr: node_network_transmit_bytes_total_rate > 1000000
+    for: 10m
     labels:
-      severity: error
+      severity: warning
     annotations:
-      summary: "Collector Error (instance {{ $labels.instance }})"
-      description: "Collector {{ $labels.collector }} was not successful\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+      summary: "High network transmit rate (instance {{ $labels.instance }})"
+      description: "Network transmit rate is above 1 MB/s for more than 10 minutes (current value: {{ $value }})"

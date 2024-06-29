@@ -6,13 +6,25 @@ route:
   group_wait: 10s
   group_interval: 10s
   repeat_interval: 3600s
-  receiver: 'email'
+  receiver: 'telegram'
+
 receivers:
-- name: 'email'
-  email_configs:
-  - to: 'cqvnno1@gmail.com'
-    from: 'vn2021no1@gmail.com'
-    smarthost: 'smtp.gmail.com:587'
-    auth_username: 'vn2021no1@gmail.com'
-    auth_identity: 'vn2021no1@gmail.com'
-    auth_password: '***********'
+  - name: 'email'
+    email_configs:
+      - smarthost: 'smtp.gmail.com:587'
+        auth_username: 'quocnvc@gmail.com'
+        auth_password: "bixa gxjx udhx hfyb"
+        from: 'quocnvc@gmail.com'
+        to: 'cqvnno1@gmail.com'
+        headers:
+          subject: 'Prometheus Mail Alerts'
+          
+  - name: 'telegram'
+    telegram_configs:
+      - bot_token: 'token'
+        api_url: https://api.telegram.org
+        chat_id: "chat_id"
+        message: '{{ template "telegram.yucca.message" . }}'
+
+templates:
+- '/templates/telegram.tmpl'
