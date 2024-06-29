@@ -13,3 +13,6 @@ Note: Option `Less secure apps` đã bị disabled.
 
 ## Alert qua telegram
 - Tạo bot telegram với @BotFather
+
+References:
+https://www.teleme.io/articles/create_your_own_telegram_bot?hl=vi
