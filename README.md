@@ -22,12 +22,11 @@ Note: Option `Less secure apps` đã bị disabled.
 
   ![](docs/images/alert-2.png "Alert 2")    
 
-- Ở trong group vừa tạo gõ `/start`, Sau đó vào link bên dưới để lấy ChatID của group
+- Ở trong group vừa tạo gõ `/start`, Sau đó vào link bên dưới để lấy ChatID của group (ChatID của group thường có dấu `-` ở đầu)
 
   https://api.telegram.org/bot$BOT_TOKEN/getUpdates    
   Ex:   
   https://api.telegram.org/bot7498607478:AAFub3sFqpw1rnj-Ni7IByYrV36UvYc-7nw/getUpdates
-
 
   ![](docs/images/alert-3.png "Alert 3")    
 
