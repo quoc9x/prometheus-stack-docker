@@ -21,9 +21,9 @@ receivers:
           
   - name: 'telegram'
     telegram_configs:
-      - bot_token: 'token'
+      - bot_token: '7498607478:AAFub3sfjdw1rnj-Ni7IByYrV67EvYc-7zv'
         api_url: https://api.telegram.org
-        chat_id: "chat_id"
+        chat_id: -4220896623
         message: '{{ template "telegram.yucca.message" . }}'
 
 templates:

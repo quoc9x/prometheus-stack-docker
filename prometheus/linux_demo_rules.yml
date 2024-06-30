@@ -5,7 +5,7 @@ groups:
 - name: linux_demo_rules
   rules:
   - alert: NodeDown
-    expr: up == 1
+    expr: up == 0
     for: 1m
     labels:
       severity: critical
